@@ -1,0 +1,394 @@
+<!doctype html>
+<html lang="en" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#3B82F6">
+  <meta name="description" content="Stay hydrated with personalized water reminders">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Water Reminder">
+  <title>Water Reminder - Stay Hydrated</title><!-- PWA Manifest -->
+  <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIldhdGVyIFJlbWluZGVyIiwKICAic2hvcnRfbmFtZSI6ICJXYXRlciIsCiAgImRlc2NyaXB0aW9uIjogIllvdXIgUGVyc29uYWwgSHlkcmF0aW9uIENvbXBhbmlvbiIsCiAgInN0YXJ0X3VybCI6ICIuIiwKICAiZGlzcGxheSI6ICJzdGFuZGFsb25lIiwKICAiYmFja2dyb3VuZF9jb2xvciI6ICIjRUZGNkZGIiwKICAidGhlbWVfY29sb3IiOiAiIzNCODJGNiIsCiAgImljb25zIjogWwogICAgewogICAgICAic3JjIjogImRhdGE6aW1hZ2Uvc3ZnK3htbCwlM0NzdmcgeG1sbnM9J2h0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnJyB2aWV3Qm94PScwIDAgMTkyIDE5MiclM0UlM0NyZWN0IHdpZHRoPScxOTInIGhlaWdodD0nMTkyJyByeD0nMzInIGZpbGw9JyUyMzNCODJGNiclM0UlM0MvcmVjdCUzRSUzQ3BhdGggZD0nTTk2IDMyYzAgMCA0OCA0OCA0OCA4OHMtMjEuNSA1Ni00OCA1Ni0yMS41LTU2LTQ4LTU2UzQ4IDgwIDk2IDMyeicgZmlsbD0nd2hpdGUnJTNFJTNDL3BhdGglM0UlM0Mvc3ZnJTNFIiwKICAgICAgInNpemVzIjogIjE5MngxOTIiLAogICAgICAidHlwZSI6ICJpbWFnZS9zdmcreG1sIiwKICAgICAgInB1cnBvc2UiOiAiYW55IG1hc2thYmxlIgogICAgfQogIF0KfQ=="><!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%233B82F6'%3E%3C/rect%3E%3Cpath d='M16 6c0 0 8 8 8 14.67s-3.58 9.33-8 9.33-3.58-9.33-8-9.33S8 14 16 6z' fill='white'%3E%3C/path%3E%3C/svg%3E"><!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script><!-- Element SDK -->
+  <script src="/_sdk/element_sdk.js"></script>
+  <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        water: {
+                            50: '#EFF6FF',
+                            100: '#DBEAFE',
+                            200: '#BFDBFE',
+                            300: '#93C5FD',
+                            400: '#60A5FA',
+                            500: '#3B82F6',
+                            600: '#2563EB',
+                            700: '#1D4ED8',
+                            800: '#1E40AF',
+                            900: '#1E3A8A'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+  <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        html, body {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+        
+        .app-container {
+            height: 100%;
+            width: 100%;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #93C5FD;
+            border-radius: 2px;
+        }
+        
+        /* Progress ring animation */
+        .progress-ring__circle {
+            transition: stroke-dashoffset 0.5s ease-in-out;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+        
+        /* Water wave animation */
+        @keyframes wave {
+            0%, 100% { transform: translateX(0) translateY(0); }
+            25% { transform: translateX(-5px) translateY(2px); }
+            50% { transform: translateX(0) translateY(4px); }
+            75% { transform: translateX(5px) translateY(2px); }
+        }
+        
+        .wave-animation {
+            animation: wave 3s ease-in-out infinite;
+        }
+        
+        /* Fade animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes fadeOut {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(-10px); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+        
+        .fade-out {
+            animation: fadeOut 0.3s ease-out forwards;
+        }
+        
+        /* Slide animations */
+        @keyframes slideUp {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .slide-up {
+            animation: slideUp 0.4s ease-out forwards;
+        }
+        
+        /* Pulse animation for buttons */
+        @keyframes pulse-ring {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(1.3); opacity: 0; }
+        }
+        
+        .btn-pulse::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background: inherit;
+            animation: pulse-ring 1.5s ease-out infinite;
+            z-index: -1;
+        }
+        
+        /* Ripple effect */
+        .ripple {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .ripple::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s ease-out, height 0.6s ease-out;
+        }
+        
+        .ripple:active::before {
+            width: 300px;
+            height: 300px;
+        }
+        
+        /* Number input styling */
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+        
+        /* Screen transitions */
+        .screen {
+            display: none;
+            height: 100%;
+        }
+        
+        .screen.active {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #1E40AF;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 500;
+            z-index: 1000;
+            opacity: 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.4);
+        }
+        
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+        
+        /* Dark mode transitions */
+        * {
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+        
+        /* Bottom navigation safe area */
+        .bottom-nav {
+            padding-bottom: env(safe-area-inset-bottom, 0);
+        }
+        
+        /* Custom modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 24px;
+            max-width: 90%;
+            width: 320px;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+        
+        .modal-overlay.active .modal-content {
+            transform: scale(1);
+        }
+        
+        .dark .modal-content {
+            background: #1E3A8A;
+        }
+        
+        /* Streak fire animation */
+        @keyframes flicker {
+            0%, 100% { transform: scale(1) rotate(-2deg); }
+            50% { transform: scale(1.1) rotate(2deg); }
+        }
+        
+        .streak-fire {
+            animation: flicker 0.5s ease-in-out infinite;
+        }
+        
+        /* Water drop animation */
+        @keyframes dropFall {
+            0% { transform: translateY(-20px) scale(0); opacity: 0; }
+            50% { transform: translateY(0) scale(1); opacity: 1; }
+            100% { transform: translateY(20px) scale(0); opacity: 0; }
+        }
+        
+        .drop-animation {
+            animation: dropFall 1s ease-out forwards;
+        }
+        
+        /* Chart bars animation */
+        @keyframes growUp {
+            from { transform: scaleY(0); }
+            to { transform: scaleY(1); }
+        }
+        
+        .chart-bar {
+            transform-origin: bottom;
+            animation: growUp 0.5s ease-out forwards;
+        }
+    </style>
+  <style>body { box-sizing: border-box; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="h-full bg-water-50 dark:bg-water-900 font-sans">
+  <div id="app" class="app-container h-full w-full"><!-- ==================== ONBOARDING SCREENS ==================== --> <!-- Welcome Screen -->
+   <div id="screen-welcome" class="screen active">
+    <div class="flex-1 flex flex-col items-center justify-center p-6 text-center"><!-- Water Drop Logo -->
+     <div class="w-32 h-32 mb-8 relative">
+      <svg viewbox="0 0 128 128" class="w-full h-full wave-animation"><defs>
+        <lineargradient id="dropGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+         <stop offset="0%" style="stop-color:#60A5FA" />
+         <stop offset="100%" style="stop-color:#3B82F6" />
+        </lineargradient>
+        <filter id="dropShadow">
+         <fedropshadow dx="0" dy="4" stddeviation="8" flood-color="#3B82F6" flood-opacity="0.3" />
+        </filter>
+       </defs> <path d="M64 16c0 0 40 40 40 73.33s-17.91 46.67-40 46.67S24 122.67 24 89.33 64 16 64 16z" fill="url(#dropGradient)" filter="url(#dropShadow)" /> <ellipse cx="52" cy="70" rx="8" ry="12" fill="rgba(255,255,255,0.4)" transform="rotate(-20 52 70)" />
+      </svg>
+     </div>
+     <h1 id="app-title" class="text-3xl font-bold text-water-800 dark:text-white mb-3">Water Reminder</h1>
+     <p id="welcome-msg" class="text-lg text-water-600 dark:text-water-200 mb-8 max-w-xs">Your Personal Hydration Companion</p>
+     <div class="space-y-4 w-full max-w-xs">
+      <p class="text-sm text-water-500 dark:text-water-300">Stay healthy by drinking the right amount of water every day</p>
+      <div class="flex items-center justify-center gap-2 text-water-400"><span class="w-2 h-2 bg-water-500 rounded-full"></span> <span class="w-2 h-2 bg-water-300 rounded-full"></span> <span class="w-2 h-2 bg-water-300 rounded-full"></span> <span class="w-2 h-2 bg-water-300 rounded-full"></span>
+      </div>
+     </div>
+    </div>
+    <div class="p-6 pb-8"><button onclick="goToScreen('screen-gender')" class="w-full py-4 bg-water-500 hover:bg-water-600 text-white font-semibold rounded-2xl 
+                               shadow-lg shadow-water-500/30 transition-all duration-300 ripple"> Get Started </button>
+    </div>
+   </div><!-- Gender Selection -->
+   <div id="screen-gender" class="screen">
+    <div class="p-6"><button onclick="goToScreen('screen-welcome')" class="p-2 -ml-2 text-water-600 dark:text-water-300">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+      </svg></button>
+    </div>
+    <div class="flex-1 flex flex-col items-center justify-center p-6">
+     <div class="flex items-center justify-center gap-2 text-water-400 mb-8"><span class="w-2 h-2 bg-water-300 rounded-full"></span> <span class="w-2 h-2 bg-water-500 rounded-full"></span> <span class="w-2 h-2 bg-water-300 rounded-full"></span> <span class="w-2 h-2 bg-water-300 rounded-full"></span>
+     </div>
+     <h2 class="text-2xl font-bold text-water-800 dark:text-white mb-2">Select Your Gender</h2>
+     <p class="text-water-500 dark:text-water-300 mb-8">This helps us calculate your daily water goal</p>
+     <div class="flex gap-6"><button onclick="selectGender('male')" id="btn-male" class="w-32 h-40 flex flex-col items-center justify-center bg-white dark:bg-water-800 
+                                   rounded-3xl shadow-lg border-2 border-transparent hover:border-water-500 
+                                   transition-all duration-300 gender-btn">
+       <div class="w-16 h-16 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mb-3">
+        <svg class="w-10 h-10 text-blue-500" fill="currentColor" viewbox="0 0 24 24"><path d="M12 2a2 2 0 100 4 2 2 0 000-4zM9 7a2 2 0 00-2 2v6h2v7h6v-7h2V9a2 2 0 00-2-2H9z" />
+        </svg>
+       </div><span class="font-semibold text-water-700 dark:text-water-200">Male</span> </button> <button onclick="selectGender('female')" id="btn-female" class="w-32 h-40 flex flex-col items-center justify-center bg-white dark:bg-water-800 
+                                   rounded-3xl shadow-lg border-2 border-transparent hover:border-water-500 
+                                   transition-all duration-300 gender-btn">
+       <div class="w-16 h-16 bg-pink-100 dark:bg-pink-900 rounded-full flex items-center justify-center mb-3">
+        <svg class="w-10 h-10 text-pink-500" fill="currentColor" viewbox="0 0 24 24"><path d="M12 2a2 2 0 100 4 2 2 0 000-4zM9 7a2 2 0 00-2 2v3h2l-2 8h3v2h4v-2h3l-2-8h2V9a2 2 0 00-2-2H9z" />
+        </svg>
+       </div><span class="font-semibold text-water-700 dark:text-water-200">Female</span> </button>
+     </div>
+    </div>
+    <div class="p-6 pb-8"><button onclick="goToScreen('screen-weight')" id="btn-gender-next" class="w-full py-4 bg-water-300 text-water-600 font-semibold rounded-2xl 
+                               transition-all duration-300" disabled> Continue </button>
+    </div>
+   </div><!-- Weight Input -->
+   <div id="screen-weight" class="screen">
+    <div class="p-6"><button onclick="goToScreen('screen-gender')" class="p-2 -ml-2 text-water-600 dark:text-water-300">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+      </svg></button>
+    </div>
+    <div class="flex-1 flex flex-col items-center justify-center p-6">
+     <div class="flex items-center justify-center gap-2 text-water-400 mb-8"><span class="w-2 h-2 bg-water-300 rounded-full"></span> <span class="w-2 h-2 bg-water-300 rounded-full"></span> <span class="w-2 h-2 bg-water-500 rounded-full"></span> <span class="w-2 h-2 bg-water-300 rounded-full"></span>
+     </div>
+     <h2 class="text-2xl font-bold text-water-800 dark:text-white mb-2">Enter Your Weight</h2>
+     <p class="text-water-500 dark:text-water-300 mb-8">We'll calculate your ideal water intake</p>
+     <div class="relative w-48"><input type="number" id="input-weight" min="20" max="200" value="70" class="w-full text-center text-5xl font-bold text-water-700 dark:text-white 
+                                  bg-transparent border-b-4 border-water-300 dark:border-water-600 
+                                  focus:border-water-500 focus:outline-none py-4" oninput="validateWeight()"> <span class="absolute right-0 bottom-6 text-2xl text-water-400 dark:text-water-500">kg</span>
+     </div>
+     <div class="flex items-center gap-4 mt-6"><button onclick="adjustWeight(-5)" class="w-12 h-12 rounded-full bg-water-100 dark:bg-water-800 text-water-600 dark:text-water-300 
+                                   font-bold text-xl hover:bg-water-200 dark:hover:bg-water-700 transition-colors"> − </button> <button onclick="adjustWeight(5)" class="w-12 h-12 rounded-full bg-water-100 dark:bg-water-800 text-water-600 dark:text-water-300 
+                                   font-bold text-xl hover:bg-water-200 dark:hover:bg-water-700 transition-colors"> + </button>
+     </div>
+     <p class="mt-6 text-sm text-water-400 dark:text-water-500">Recommended: <span id="recommended-water">2450</span> ml/day</p>
+    </div>
+    <div class="p-6 pb-8"><button onclick="goToScreen('screen-schedule')" id="btn-weight-next" class="w-full py-4 bg-water-500 hover:bg-water-600 text-white font-semibold rounded-2xl 
+                               shadow-lg shadow-water-500/30 transition-all duration-300 ripple"> Continue </button>
+    </div>
+   </div><!-- Schedule (Wake/Sleep Time & Interval) -->
+   <div id="screen-schedule" class="screen">
+    <div class="p-6"><button onclick="goToScreen('screen-weight')" class="p-2 -ml-2 text-water-600 dark:text-water-300">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+      </svg></button>
+    </div>
+    <div class="flex-1 flex flex-col items-center p-6 overflow-y-auto">
+     <div class="flex items-center justify-center gap-2 text-water-400 mb-8"><span class="w-2 h-2 bg-water-300 rounded-full"></span> <span class="w-2 h-2 bg-water-300 rounded-full"></span> <span class="w-2 h-2 bg-water-300 rounded-full"></span> <span class="w-2 h-2 bg-water-500 rounded-full"></span>
+     </div>
+     <h2 class="text-2xl font-bold text-water-800 dark:text-white mb-2">Set Your Schedule</h2>
+     <p class="text-water-500 dark:text-water-300 mb-8">When should we remind you?</p>
+     <div class="w-full max-w-xs space-y-6"><!-- Wake Time -->
+      <div class="bg-white dark:bg-water-800 rounded-2xl p-4 shadow-lg">
+       <div class="flex items-center gap-3 mb-3">
+        <div class="w-10 h-10 bg-yellow-100 dark:bg-yellow-900 rounded-xl flex items-center justify-center">
+         <svg class="w-6 h-6 text-yellow-500" fill="currentColor" viewbox="0 0 24 24"><path d="M12 2L4 5v6.09c0 5.05 3.41 9.76 8 10.91 4.59-1.15 8-5.86 8-10.91V5l-8-3zm-1 6h2v4h-2V8zm0 6h2v2h-2v-2z" /> <circle cx="12" cy="12" r="3" fill="currentColor" />
+         </svg>
+        </div><span class="font-semibold text-water-700 dark:text-water-200">Wake Up Time</span>
+       </div><input type="time" id="input-wake" value="07:00" class="w-full text-2xl font-bold text-center text-water-600 dark:text-water-200 
+                                      bg-water-50 dark:bg-water-700 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-water-500">
+      </div><!-- Bed Time -->
+      <div class="bg-white dark:bg-water-800 rounded-2xl p-4 shadow-lg">
+       <div class="flex items-center gap-3 mb-3">
+        <div class="w-10 h-10 bg-indigo-100 dark:bg-indigo-900 rounded-xl flex items-center justify-center">
+         <svg class="w-6 h-6 text-indigo-500" fill="currentColor" viewbox="0 0 24 24"><path d="M12 3a9 9 0 109 9c0-5-4-9-9-9zm0 16a7 7 0 110-14c3.52 0 6.41 2.61 6.93 6h-2.01A5.003 5.003 0 0012 7a5 5 0 100 10z" />
+         </svg>
+        </div><span class="font-semibold text-water-700 dark:text-water-200">Bed Time</span>
+       </div><input type="time" id="input-sleep" value="23:00" class="w-full text-2xl font-bold text-center text-water-600 dark:text-water-200 
+                                      bg-water-50 dark:bg-water-700 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-water-500
